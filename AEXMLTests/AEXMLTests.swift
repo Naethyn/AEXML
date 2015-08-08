@@ -25,9 +25,10 @@ class AEXMLTests: XCTestCase {
         // parse xml file
         if let xmlPath = NSBundle.mainBundle().pathForResource(filename, ofType: "xml") {
             if let data = NSData(contentsOfFile: xmlPath) {
-                var error: NSError?
-                if let xmlDoc = AEXMLDocument(xmlData: data, error: &error) {
+                do {
+                    let xmlDoc = try AEXMLDocument(xmlData: data)
                     xmlDocument = xmlDoc
+                } catch _ {
                 }
             }
         }
@@ -65,7 +66,7 @@ class AEXMLTests: XCTestCase {
     
     func testChildrenElements() {
         var count = 0
-        for cat in exampleXML.root["cats"].children {
+        for _ in exampleXML.root["cats"].children {
             count++
         }
         XCTAssertEqual(count, 4, "Should be able to iterate children elements")
@@ -81,7 +82,7 @@ class AEXMLTests: XCTestCase {
         
         // iterate attributes
         var count = 0
-        for attribute in firstCatAttributes {
+        for _ in firstCatAttributes {
             count++
         }
         XCTAssertEqual(count, 2, "Should be able to iterate element attributes.")
@@ -142,7 +143,7 @@ class AEXMLTests: XCTestCase {
         XCTAssertEqual(exampleXML.root["ducks"]["duck"].stringValue, "element <ducks> not found", "Should be able to tell you which element does not exist.")
         
         // optional
-        if let duck = exampleXML.root["ducks"]["duck"].first {
+        if let _ = exampleXML.root["ducks"]["duck"].first {
             XCTFail("Should not be able to find ducks here.")
         } else {
             XCTAssert(true)
@@ -190,7 +191,7 @@ class AEXMLTests: XCTestCase {
     func testFindWithAttributes() {
         var count = 0
         if let bulls = exampleXML.root["dogs"]["dog"].allWithAttributes(["color" : "white"]) {
-            for bull in bulls {
+            for _ in bulls {
                 count++
             }
         }
